@@ -150,4 +150,24 @@ class MemberJpaRepositoryTest {
         assertThat(foundMembers.size()).isEqualTo(1);
     }
 
+    /**
+     * <h3>Named query.</h3>
+     */
+    @Test
+    public void findByUsername() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+        // when
+        List<Member> foundMembers = memberJpaRepository.findByUsername(member1.getUsername());
+        Member foundMember = foundMembers.get(0);
+
+        // then
+        assertThat(foundMember).isEqualTo(member1);
+    }
+
+
 }
