@@ -1,5 +1,6 @@
 package hello.datajpa.repository.member;
 
+import hello.datajpa.dto.MemberDto;
 import hello.datajpa.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,4 +38,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
               @Param("username") String username
             , @Param("age") int age
     );
+
+    @Query("select m.username from Member m")
+    List<String> findUsernameAsList();
+
+    @Query("select new hello.datajpa.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
+    List<MemberDto> findMemberByDto();
 }

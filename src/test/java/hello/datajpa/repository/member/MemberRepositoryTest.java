@@ -1,6 +1,9 @@
 package hello.datajpa.repository.member;
 
+import hello.datajpa.dto.MemberDto;
 import hello.datajpa.entity.Member;
+import hello.datajpa.entity.Team;
+import hello.datajpa.repository.team.TeamRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +23,7 @@ public class MemberRepositoryTest {
 
     @PersistenceContext EntityManager em;
     @Autowired MemberRepository memberRepository;
+    @Autowired TeamRepository teamRepository;
 
     @Test
     public void saveWithFind() throws Exception {
@@ -79,7 +83,6 @@ public class MemberRepositoryTest {
         // given
         Member member1 = new Member("member1");
         Member member2 = new Member("member2");
-
         memberRepository.save(member1);
         memberRepository.save(member2);
 
@@ -95,7 +98,6 @@ public class MemberRepositoryTest {
         // given
         Member member1 = new Member("member1");
         Member member2 = new Member("member2");
-
         memberRepository.save(member1);
         memberRepository.save(member2);
 
@@ -132,7 +134,6 @@ public class MemberRepositoryTest {
         // given
         Member member1 = new Member("member1", 10);
         Member member2 = new Member("member2", 20);
-
         memberRepository.save(member1);
         memberRepository.save(member2);
 
@@ -151,7 +152,6 @@ public class MemberRepositoryTest {
         // given
         Member member1 = new Member("member1", 10);
         Member member2 = new Member("member2", 20);
-
         memberRepository.save(member1);
         memberRepository.save(member2);
         // when
@@ -171,7 +171,6 @@ public class MemberRepositoryTest {
         // given
         Member member1 = new Member("member1", 10);
         Member member2 = new Member("member2", 20);
-
         memberRepository.save(member1);
         memberRepository.save(member2);
         // when
@@ -191,7 +190,6 @@ public class MemberRepositoryTest {
         // given
         Member member1 = new Member("member1", 10);
         Member member2 = new Member("member2", 20);
-
         memberRepository.save(member1);
         memberRepository.save(member2);
 
@@ -201,6 +199,51 @@ public class MemberRepositoryTest {
 
         // then
         assertThat(foundMember).isEqualTo(member1);
+    }
+
+    @Test
+    public void findUsernameAsList() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        // when
+        List<String> usernames = memberRepository.findUsernameAsList();
+        for (String username : usernames) {
+            System.out.println("username = " + username);
+        }
+        String firstUsername = usernames.get(0);
+
+        // then
+        assertThat(firstUsername).isEqualTo(member1.getUsername());
+    }
+
+    /**
+     * <h3>Find member by dto.</h3>
+     * <p>Find member by dto object.</p>
+     */
+    @Test
+    public void findMemberByDto() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        teamRepository.save(team1);
+
+        Member member1 = new Member("member1", 10);
+        member1.setTeam(team1);
+        memberRepository.save(member1);
+
+        // when
+        List<MemberDto> foundMembers = memberRepository.findMemberByDto();
+        for (MemberDto foundMember : foundMembers) {
+            System.out.println("foundMember = " + foundMember);
+        }
+        MemberDto foundMember = foundMembers.get(0);
+
+        // then
+        assertThat(foundMember.getUsername()).isEqualTo(member1.getUsername());
+        assertThat(foundMember.getTeamName()).isEqualTo(member1.getTeam().getName());
     }
 
 }
