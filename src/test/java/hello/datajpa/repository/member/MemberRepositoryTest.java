@@ -126,4 +126,22 @@ public class MemberRepositoryTest {
         // then
         assertThat(foundMember.getUsername()).isEqualTo(member1.getUsername());
     }
+
+    @Test
+    public void findByUsernameAndAgeGreaterThan() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        // when
+        List<Member> foundMembers = memberRepository.findByUsernameAndAgeGreaterThan("member1", 5);
+
+        // then
+        assertThat(foundMembers.get(0).getUsername()).isEqualTo(member1.getUsername());
+        assertThat(foundMembers.get(0).getAge()).isEqualTo(member1.getAge());
+        assertThat(foundMembers.size()).isEqualTo(1);
+    }
+
 }

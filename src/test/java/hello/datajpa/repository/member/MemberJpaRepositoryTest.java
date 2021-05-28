@@ -1,8 +1,6 @@
 package hello.datajpa.repository.member;
 
 import hello.datajpa.entity.Member;
-import hello.datajpa.repository.member.MemberJpaRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -134,6 +131,23 @@ class MemberJpaRepositoryTest {
 
         // then
         assertThat(foundMember.getUsername()).isEqualTo(member1.getUsername());
+    }
+
+    @Test
+    public void findByUsernameAndAgeGreaterThen() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+        // when
+        List<Member> foundMembers = memberJpaRepository.findByUsernameAndAgeGreaterThan("member1", 5);
+
+        // then
+        assertThat(foundMembers.get(0).getUsername()).isEqualTo(member1.getUsername());
+        assertThat(foundMembers.get(0).getAge()).isEqualTo(member1.getAge());
+        assertThat(foundMembers.size()).isEqualTo(1);
     }
 
 }
