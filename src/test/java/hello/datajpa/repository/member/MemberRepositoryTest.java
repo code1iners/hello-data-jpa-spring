@@ -182,4 +182,25 @@ public class MemberRepositoryTest {
         assertThat(foundMember).isEqualTo(member1);
     }
 
+    /**
+     * <h3>Find user.</h3>
+     * <p>Find user as member entity with @Query.</p>
+     */
+    @Test
+    public void findMember() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        // when
+        List<Member> foundMembers = memberRepository.findUser(member1.getUsername(), member1.getAge());
+        Member foundMember = foundMembers.get(0);
+
+        // then
+        assertThat(foundMember).isEqualTo(member1);
+    }
+
 }
