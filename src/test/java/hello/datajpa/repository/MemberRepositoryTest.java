@@ -1,10 +1,10 @@
 package hello.datajpa.repository;
 
 import hello.datajpa.entity.Member;
+import hello.datajpa.repository.member.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -14,7 +14,8 @@ import static org.assertj.core.api.Assertions.*;
 //@Rollback(false)
 public class MemberRepositoryTest {
 
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     public void 저장_및_조회() throws Exception {
