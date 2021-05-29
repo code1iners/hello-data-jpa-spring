@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -245,5 +246,24 @@ public class MemberRepositoryTest {
         assertThat(foundMember.getUsername()).isEqualTo(member1.getUsername());
         assertThat(foundMember.getTeamName()).isEqualTo(member1.getTeam().getName());
     }
+
+    @Test
+    public void findByNames() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        // when
+        List<Member> foundMembers = memberRepository.findByNames(Arrays.asList("member1", "member2"));
+        for (Member foundMember : foundMembers) {
+            System.out.println("foundMember = " + foundMember);
+        }
+        Member foundMember = foundMembers.get(0);
+        // then
+        assertThat(foundMembers.size()).isEqualTo(2);
+    }
+
 
 }
