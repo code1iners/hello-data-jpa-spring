@@ -337,4 +337,29 @@ public class MemberRepositoryTest {
         assertThat(slice.hasPrevious()).isFalse();
     }
 
+    @Test
+    public void bulkPlusAge() throws Exception {
+        // given
+        memberRepository.save(new Member("member1", 32));
+        memberRepository.save(new Member("member2", 17));
+        memberRepository.save(new Member("member3", 28));
+        memberRepository.save(new Member("member4", 30));
+        memberRepository.save(new Member("member5", 28));
+        memberRepository.save(new Member("member6", 24));
+        memberRepository.save(new Member("member7", 17));
+        memberRepository.save(new Member("member8", 19));
+        memberRepository.save(new Member("member9", 20));
+        memberRepository.save(new Member("member10", 10));
+
+        // when
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+        List<Member> result = memberRepository.findByUsername("member9");
+        Member member = result.get(0);
+        System.out.println("member = " + member);
+
+        // then
+        assertThat(resultCount).isEqualTo(6);
+    }
+
 }
