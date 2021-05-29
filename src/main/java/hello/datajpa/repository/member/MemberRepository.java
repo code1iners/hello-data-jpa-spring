@@ -2,6 +2,9 @@ package hello.datajpa.repository.member;
 
 import hello.datajpa.dto.MemberDto;
 import hello.datajpa.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -53,6 +56,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findAsSingleByUsername(String username);
     Optional<Member> findAsOptionalByUsername(String username);
 
+    @Query(value = "select m from Member m left join m.team t"
+            ,countQuery = "select count(m) from Member m")
+    Page<Member> findAsPageByAge(int age, Pageable pageable);
 
+    Slice<Member> findAsSliceByAge(int age, Pageable pageable);
 
 }

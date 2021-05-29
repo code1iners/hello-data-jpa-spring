@@ -7,7 +7,10 @@ import hello.datajpa.repository.team.TeamRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -283,6 +286,55 @@ public class MemberRepositoryTest {
         System.out.println("asList = " + asList);
         System.out.println("asSingle = " + asSingle);
         System.out.println("asOptional = " + asOptional);
+    }
+
+    @Test
+    public void paging() throws Exception {
+        // given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 10));
+        memberRepository.save(new Member("member3", 10));
+        memberRepository.save(new Member("member4", 10));
+        memberRepository.save(new Member("member5", 10));
+        memberRepository.save(new Member("member6", 10));
+        memberRepository.save(new Member("member7", 10));
+        memberRepository.save(new Member("member8", 10));
+        memberRepository.save(new Member("member9", 10));
+        memberRepository.save(new Member("member10", 10));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // when
+        Page<Member> page = memberRepository.findAsPageByAge(age, pageRequest);
+        Slice<Member> slice = memberRepository.findAsSliceByAge(age, pageRequest);
+
+        // note. Entity to DTO.
+        Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), m.getTeam().getName()));
+
+        // then
+        // note. Check page.
+        System.out.println("totalElements = " + page.getTotalElements());
+        for (Member member : page.getContent()) {
+            System.out.println("member = " + member);
+        }
+        assertThat(page.getContent().size()).isEqualTo(3);
+        assertThat(page.getTotalElements()).isEqualTo(10);
+        assertThat(page.getNumber()).isEqualTo(0);
+        assertThat(page.getTotalPages()).isEqualTo(4);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
+        assertThat(page.hasPrevious()).isFalse();
+
+        // note. Check slice.
+        for (Member member : slice.getContent()) {
+            System.out.println("member = " + member);
+        }
+        assertThat(slice.getContent().size()).isEqualTo(3);
+        assertThat(slice.getNumber()).isEqualTo(0);
+        assertThat(slice.isFirst()).isTrue();
+        assertThat(slice.hasNext()).isTrue();
+        assertThat(slice.hasPrevious()).isFalse();
     }
 
 }
