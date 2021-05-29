@@ -52,4 +52,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAsListByUsername(String username);
     Member findAsSingleByUsername(String username);
     Optional<Member> findAsOptionalByUsername(String username);
+
+
+
 }
