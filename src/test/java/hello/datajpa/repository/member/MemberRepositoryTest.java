@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -265,5 +266,23 @@ public class MemberRepositoryTest {
         assertThat(foundMembers.size()).isEqualTo(2);
     }
 
+    @Test
+    public void types() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 20);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        // when
+        List<Member> asList = memberRepository.findAsListByUsername("member1");
+        Member asSingle = memberRepository.findAsSingleByUsername("member2");
+        Optional<Member> asOptional = memberRepository.findAsOptionalByUsername("member1");
+
+        // then
+        System.out.println("asList = " + asList);
+        System.out.println("asSingle = " + asSingle);
+        System.out.println("asOptional = " + asOptional);
+    }
 
 }

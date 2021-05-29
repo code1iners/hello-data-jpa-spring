@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>Included Query methods.</p>
@@ -47,4 +48,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
+
+    List<Member> findAsListByUsername(String username);
+    Member findAsSingleByUsername(String username);
+    Optional<Member> findAsOptionalByUsername(String username);
 }
