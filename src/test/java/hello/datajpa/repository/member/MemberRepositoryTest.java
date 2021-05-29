@@ -393,6 +393,29 @@ public class MemberRepositoryTest {
             System.out.println("member.teamClass = " + member.getTeam().getClass());
             System.out.println("member.team = " + member.getTeam().getName());
         }
+        // then
+    }
+
+    /**
+     * <h3>Query hint & Lock</h3>
+     */
+    @Test
+    public void queryHint() throws Exception {
+        // given
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        // when
+//        Member foundMember = memberRepository.findReadOnlyByUsername(member1.getUsername());
+//        foundMember.setUsername("member2");
+        List<Member> foundMemberWithLock = memberRepository.findLockByUsername(member1.getUsername());
+        for (Member foundMember : foundMemberWithLock) {
+            System.out.println("member = " + foundMember);
+        }
+
+        em.flush();
 
         // then
     }
