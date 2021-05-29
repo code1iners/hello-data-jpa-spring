@@ -362,4 +362,39 @@ public class MemberRepositoryTest {
         assertThat(resultCount).isEqualTo(6);
     }
 
+    /**
+     * <h3>Entity graph.</h3>
+     */
+    @Test
+    public void findMemberLazy() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        Team team2 = new Team("team2");
+        teamRepository.save(team1);
+        teamRepository.save(team2);
+
+        Member member1 = new Member("member1", 10, team1);
+        Member member2 = new Member("member2", 10, team2);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        List<Member> members = memberRepository.findAll();
+        List<Member> membersWithEntityGraph = memberRepository.findWithEntityGraphByUsername("member1");
+
+        // note. Find members with fetch join.
+//        List<Member> members = memberRepository.findMembersWithFetchJoin();
+
+        for (Member member : membersWithEntityGraph) {
+            System.out.println("member = " + member.getUsername());
+            System.out.println("member.teamClass = " + member.getTeam().getClass());
+            System.out.println("member.team = " + member.getTeam().getName());
+        }
+
+        // then
+    }
+
 }

@@ -5,6 +5,7 @@ import hello.datajpa.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,8 +30,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * <p>in case of Same name which method name with NamedQuery's name.</p>
      * <p>Not recommended way because write in entity object directly.</p>
      */
-//    @Query(name = "Member.findByUsername") // note. QueryNamed's name == method name
     List<Member> findByUsername(@Param("username") String username);
+//    @Query(name = "Member.findByUsername") // note. QueryNamed's name == method name
 
 
     /**
@@ -82,4 +83,25 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
     int bulkAgePlus(@Param("age") int age);
+
+    /**
+     * <h3>Entity graph not use.</h3>
+     */
+    @Query("select m from Member m left join fetch m.team")
+    List<Member> findMembersWithFetchJoin();
+
+    /**
+     * <h3>Entity graph use(like fetch join).</h3>
+     */
+    @Override
+    @EntityGraph(attributePaths = {"team"})
+    List<Member> findAll();
+
+    @EntityGraph(attributePaths = {"team"})
+    @Query("select m from Member m")
+    List<Member> findMembersWIthEntityGraph();
+
+    @EntityGraph(attributePaths = {"team"})
+//    @EntityGraph("Member.all")  // note. Used with @NamedEntityGraph in Entity (Not recommended).
+    List<Member> findWithEntityGraphByUsername(@Param("username") String username);
 }
