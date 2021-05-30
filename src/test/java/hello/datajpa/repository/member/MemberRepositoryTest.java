@@ -420,4 +420,16 @@ public class MemberRepositoryTest {
         // then
     }
 
+    @Test
+    public void findMembersCustom() throws Exception {
+        // given
+        List<Member> members = memberRepository.findMembersCustom();
+        for (Member member : members) {
+            System.out.println("member = " + member);
+        }
+        // when
+
+        // then
+    }
+
 }
