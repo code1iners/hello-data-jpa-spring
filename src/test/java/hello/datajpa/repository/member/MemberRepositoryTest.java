@@ -532,4 +532,57 @@ public class MemberRepositoryTest {
         // then
     }
 
+    /**
+     * <h3>Native query.</h3>
+     */
+    @Test
+    public void nativeQuery() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        em.persist(team1);
+
+        Member member1 = new Member("member1", 0, team1);
+        Member member2 = new Member("member2", 0, team1);
+        em.persist(member1);
+        em.persist(member2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Member foundMember = memberRepository.findNativeQuery("member1");
+
+        // then
+        assertThat(foundMember.getUsername()).isEqualTo(member1.getUsername());
+    }
+
+    /**
+     * <3>Native query with projection.</3>
+     */
+    @Test
+    public void nativeQueryWithProjection() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        em.persist(team1);
+
+        Member member1 = new Member("member1", 0, team1);
+        Member member2 = new Member("member2", 0, team1);
+        em.persist(member1);
+        em.persist(member2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(0, 10));
+        List<MemberProjection> content = result.getContent();
+        for (MemberProjection memberProjection : content) {
+            String username = memberProjection.getUsername();
+            String teamName = memberProjection.getTeamName();
+            System.out.println("username = " + username);
+            System.out.println("teamName = " + teamName);
+        }
+        // then
+    }
+
 }
