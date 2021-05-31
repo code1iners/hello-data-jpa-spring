@@ -460,6 +460,7 @@ public class MemberRepositoryTest {
 
     /**
      * <h3>Query by example.</h3>
+     * <p>Could not use outer join (Only inner join).</p>
      * <p>Not recommended way.</p>
      */
     @Test
