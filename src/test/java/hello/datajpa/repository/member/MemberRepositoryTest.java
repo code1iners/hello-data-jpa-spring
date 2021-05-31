@@ -4,6 +4,7 @@ import hello.datajpa.dto.MemberDto;
 import hello.datajpa.entity.Member;
 import hello.datajpa.entity.Team;
 import hello.datajpa.repository.team.TeamRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -432,4 +434,31 @@ public class MemberRepositoryTest {
         // then
     }
 
+    /**
+     * <h3>Specification.</h3>
+     * <p>With Jpa criteria.</p>
+     * <p>Not recommended way.</p>
+     */
+    @Test
+    public void specification() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        em.persist(team1);
+
+        Member member1 = new Member("member1", 10, team1);
+        Member member2 = new Member("member2", 10, team1);
+        em.persist(member1);
+        em.persist(member2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Specification<Member> spec = MemberSpec.username("member1").and(MemberSpec.teamName("team1"));
+        List<Member> result = memberRepository.findAll(spec);
+
+        // then
+        Assertions.assertThat(result.size()).isEqualTo(1);
+    }
+    
 }
