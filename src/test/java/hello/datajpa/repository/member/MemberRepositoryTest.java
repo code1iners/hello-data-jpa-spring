@@ -8,10 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -458,7 +455,45 @@ public class MemberRepositoryTest {
         List<Member> result = memberRepository.findAll(spec);
 
         // then
-        Assertions.assertThat(result.size()).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(1);
     }
-    
+
+    /**
+     * <h3>Query by example.</h3>
+     * <p>Not recommended way.</p>
+     */
+    @Test
+    public void queryByExample() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        em.persist(team1);
+
+        Member member1 = new Member("member1", 0, team1);
+        Member member2 = new Member("member2", 0, team1);
+        em.persist(member1);
+        em.persist(member2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        // note. Probe.
+        Team team = new Team("team1");
+        Member member = new Member("member1");
+        member.setTeam(team); // note. Add inner join.
+
+        // note. Add ignore condition.
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("age");
+
+        // note. Create example object.
+        Example<Member> example = Example.of(member, matcher);
+
+        // note. Get members with example object.
+        List<Member> result = memberRepository.findAll(example);
+
+        // then
+        assertThat(result.get(0).getUsername()).isEqualTo("member1");
+    }
+
 }
